@@ -110,6 +110,7 @@
 
 - name: Kill Ambari server (2/2)
   command: pkill -f ambari-server
+  ignore_errors: yes
 
 - name: Reset Ambari server
   command: ambari-server reset --verbose --silent

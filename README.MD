@@ -24,4 +24,7 @@ Public Cloud infrastructure:
 
 # Credits
 
-This work is inspired by https://github.com/gautamborad/hdp-ansible/tree/master/playbooks and https://github.com/hortonworks/cloudbreak-images
+This work is inspired by:
+- https://github.com/gautamborad/hdp-ansible/tree/master/playbooks
+- https://github.com/hortonworks/cloudbreak-images
+- https://github.com/joe-speedboat/ansible.guacamole

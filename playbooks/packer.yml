@@ -3,8 +3,6 @@
   hosts: common
   any_errors_fatal: true
   become: yes
-  vars:
-    distro: hdp
   roles:
     - openstack-common
 

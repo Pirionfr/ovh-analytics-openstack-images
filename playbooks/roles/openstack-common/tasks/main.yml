@@ -1,17 +1,9 @@
 ---
 - name: Load OS specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - files:
-        - "{{ ansible_os_family|lower }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family|lower }}-{{ ansible_distribution|lower }}.yml"
-        - "{{ ansible_os_family|lower }}.yml"
-        - defaults.yml
-      paths:
-        - ../vars
+  include_vars: redhat-7.yml
 
-- include_vars: group_vars/analytics
-  when: distro == "hdp"
+- name: Include HDP variables
+  include_vars: group_vars/analytics
 
 - name: Install epel-release
   yum:
@@ -20,13 +12,12 @@
     update_cache: yes
   ignore_errors: true
   register: epel_result
-  when: ansible_os_family == "RedHat"
 
 - name: Install epel-release (rpm)
   yum:
     name: "{{ epel_rpm_url }}"
     state: present
-  when: ansible_os_family == "RedHat" and epel_result|failed
+  when: epel_result|failed
 
 - name: Ensure required packages are installed (yum)
   yum:
@@ -34,23 +25,10 @@
     update_cache: yes
     state: installed
   with_items: "{{ packages|default([]) }}"
-  when: ansible_os_family == "RedHat"
-
-- name: Ensure required packages are installed (apt)
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    state: installed
-  with_items: "{{ packages|default([]) }}"
-  when: ansible_os_family == "Debian"
 
 - name: Upgrade all packages (yum)
   yum: name=* state=latest
   when: ansible_os_family == "RedHat"
-
-- name: Upgrade all packages (apt)
-  apt: upgrade=dist
-  when: ansible_os_family == "Debian"
 
 - name: Make sure the NTP service is stopped
   service: name={{ ntp_service }} state=stopped
@@ -74,7 +52,6 @@
   with_items:
     - "* soft nofile 32768"
     - "* hard nofile 32768"
-  when: not azure
 
 - name: Set nproc limits
   lineinfile: dest=/etc/security/limits.d/90-nproc.conf
@@ -86,7 +63,6 @@
   with_items:
     - "* soft nproc 32768"
     - "* hard nproc 32768"
-  when: not azure
 
 - name: Set swappiness to 1
   sysctl: name=vm.swappiness value=1 state=present ignoreerrors=yes
@@ -104,7 +80,7 @@
 - name: Get number of kernels in grub.conf
   shell: grep -E "^[[:blank:]]*kernel" /boot/grub/grub.conf | grep -v transparent_hugepage; exit 0
   register: grep_result
-  when: ansible_os_family == "RedHat" and (ansible_distribution == "Amazon" or ansible_distribution_major_version == "6") and not azure
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
   ignore_errors: true
 
 - name: Disable Transparent Huge Pages in Grub 1
@@ -114,14 +90,14 @@
               regexp='(^\s*kernel(\s+(?!transparent_hugepage=never)[\w=/\-\.\,]+)*)\s*$'
               line='\1 transparent_hugepage=never'
   with_items: "{{ grep_result.stdout_lines | default('') }}"
-  when: ansible_os_family == "RedHat" and (ansible_distribution == "Amazon" or ansible_distribution_major_version == "6") and not azure
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
 
 
 - name: Disable Transparent Huge Pages in Grub 2
   lineinfile: dest=/etc/default/grub
               state=present
               line='GRUB_CMDLINE_LINUX=$GRUB_CMDLINE_LINUX" transparent_hugepage=never"'
-  when: ansible_distribution_major_version|int > 6 and not azure
+  when: ansible_distribution_major_version|int > 6
   notify: Run update-grub
 
 - meta: flush_handlers
@@ -129,7 +105,6 @@
 - name: Disable Transparent Huge Pages until reboot
   shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled && echo never > /sys/kernel/mm/transparent_hugepage/defrag
   ignore_errors: true
-  when: not azure
 
 - name: Reconfigure resolv.conf search
   lineinfile: dest={{ resolv_conf }}
@@ -140,10 +115,6 @@
   notify: Run resolvconf
 
 - meta: flush_handlers
-
-- name: Configure bonding
-  include: bonding.yml
-  when: bond_interfaces is defined
 
 - name: Include partitioning.yml
   include: partitioning.yml
@@ -208,10 +179,6 @@
          passno=0
   with_indexed_items: "{{ datanode_disks|default([]) }}"
   when: datanode_disks is defined and datanode_disks and ansible_devices[item.1] is defined
-
-- name: Include cachedisks.yml
-  include: cachedisks.yml
-  when: software_raid_devices is defined
 
 - include: unbound-dns.yml
   when: use_dns

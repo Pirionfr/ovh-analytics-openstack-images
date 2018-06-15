@@ -1,6 +1,4 @@
 ---
-# defaults file for guacamole-ansible-role
-
 guacamole_version: 0.9.14
 guacamole_db_name: guac_db
 guacamole_db_username: guac_db_usr

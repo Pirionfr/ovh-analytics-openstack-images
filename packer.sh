@@ -96,10 +96,10 @@ set -- "${POSITIONAL[@]}"
 # check for required env vars
 if [[ -n $1 ]] || [ -z $OS_USERNAME ] || [ -z $OS_PROJECT_ID ] || [ -z $OS_PASSWORD ] || [ -z $OS_REGION_NAME ] || [ -z $OS_AUTH_URL ]; then
   usage
-  exit 0;
+  exit 1;
 fi
 
-# all set! start cleanup script
+# all set! start build script
 echo -e "##############################################"
 echo -e "#                                            #"
 echo -e "#                OVH HDP PACKER              #"

@@ -1,5 +1,7 @@
 # Openstack OVH Analytics images
 
+![Travis](https://travis-ci.com/Hugoch/ovh-analytics-openstack-images.svg?branch=master)
+
 Packer and Ansible scripts to build Openstack base images for cluster deployment.
 
 

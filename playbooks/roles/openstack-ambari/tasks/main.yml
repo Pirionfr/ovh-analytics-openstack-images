@@ -5,20 +5,6 @@
 - name: Bootstrap Ambari
   import_tasks: prerequisites.yml
 
-- name: Install git
-  yum:
-    name: git
-    state: latest
-  when: tachyon_service
-
-- name: Get Tachyon Service
-  git:
-    repo: "https://github.com/seraphin/tachyon-service.git"
-    dest: "/var/lib/ambari-server/resources/stacks/HDP/2.2/services/tachyon-service/"
-    force: yes
-  when: tachyon_service
-
-
 # ensure that blueprint doesn't exist for idempotence
 - name: Make sure the pre-warm blueprint doesn't already exist
   uri:

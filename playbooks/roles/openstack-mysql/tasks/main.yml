@@ -1,5 +1,4 @@
 ---
-# Variable configuration.
 - include: variables.yml
 
 - name: Copy MariaDB repo

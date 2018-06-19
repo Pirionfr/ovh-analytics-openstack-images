@@ -60,4 +60,3 @@ stages:
 branches:
   only:
   - master
-if: tag IS present

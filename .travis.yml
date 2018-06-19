@@ -33,7 +33,7 @@ install:
 jobs:
   include:
   - stage: common
-    script: test/run.sh $IMAGE $OS_REGION_NAME && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+    script: export -f travis_wait && test/run.sh $IMAGE $OS_REGION_NAME && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
     env: IMAGE="packer-common.json"
   - stage: images
     script: test/run.sh $IMAGE $OS_REGION_NAME
@@ -45,13 +45,13 @@ jobs:
   - script: test/run.sh $IMAGE $OS_REGION_NAME
     env: IMAGE="packer-ambari.json"
   - stage: publish
-    script: test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+    script: export -f travis_wait && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
     env: IMAGE="packer-guacamole.json"
-  - script: test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: export -f travis_wait && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
     env: IMAGE="packer-kerberos.json"
-  - script: test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: export -f travis_wait && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
     env: IMAGE="packer-mysql.json"
-  - script: test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: export -f travis_wait && test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
     env: IMAGE="packer-ambari.json"
 stages:
 - common

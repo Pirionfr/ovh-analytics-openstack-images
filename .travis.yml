@@ -45,13 +45,13 @@ jobs:
   - script: test/run.sh $IMAGE $OS_REGION_NAME
     env: IMAGE="packer-ambari.json"
   - stage: publish
-    script: travis_wait 20 test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+    script: travis_wait 20 test/publish.sh '$(jq -r .variables.image_name $IMAGE)' $OS_REGION_NAME
     env: IMAGE="packer-guacamole.json"
-  - script: travis_wait 20 test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: travis_wait 20 test/publish.sh '$(jq -r .variables.image_name $IMAGE)' $OS_REGION_NAME
     env: IMAGE="packer-kerberos.json"
-  - script: travis_wait 20 test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: travis_wait 20 test/publish.sh '$(jq -r .variables.image_name $IMAGE)' $OS_REGION_NAME
     env: IMAGE="packer-mysql.json"
-  - script: travis_wait 50 test/publish.sh "$(jq -r '.variables.image_name' $IMAGE)" $OS_REGION_NAME
+  - script: travis_wait 50 test/publish.sh '$(jq -r .variables.image_name $IMAGE)' $OS_REGION_NAME
     env: IMAGE="packer-ambari.json"
 stages:
 - common

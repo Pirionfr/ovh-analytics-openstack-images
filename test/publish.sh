@@ -3,7 +3,8 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 COMMIT=$(git rev-parse --verify --short HEAD 2>/dev/null)
 TAG=$(git describe --tags 2>/dev/null)
 VERSION=${TAG:-latest}
-IMAGE_NAME=$1
+IMAGE=$1
+IMAGE_NAME="$(jq -r .variables.image_name ${IMAGE})"
 MD5SUM="$(command -v md5sum)"
 if ! [ -x "${MD5SUM}" ]; then
     MD5SUM="$(command -v md5) -q"

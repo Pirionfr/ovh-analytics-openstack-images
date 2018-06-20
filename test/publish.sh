@@ -98,7 +98,7 @@ fi
 tmp_dir=$(mktemp -d)
 echo "Downloading image in '$tmp_dir'" >&2
 # download raw image
-if ! travis_wait 50 openstack --os-region-name "$IMAGE_REGION" image save --file "${tmp_dir}/${image_file_name}" "${image_id}"; then
+if ! openstack --os-region-name "$IMAGE_REGION" image save --file "${tmp_dir}/${image_file_name}" "${image_id}"; then
     echo "Unable to download image '${image_id}' in '${tmp_dir}'" >&2
     exit 1
 fi
